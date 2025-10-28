@@ -6,10 +6,21 @@
     <title>{% block title %}TODO App{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
     {% block extra_css %}{% endblock %}
+    <style>
+        /* 利用規約未同意時のナビゲーション無効化スタイル */
+        .navbar-disabled {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .navbar-disabled .navbar-item {
+            color: #999 !important;
+        }
+    </style>
 </head>
 <body>
     <!-- ナビゲーションバー -->
-    <nav class="navbar">
+    <nav class="navbar" id="mainNavbar">
         <div class="nav-container">
             <div class="navbar-menu">
                 <a href="/" class="navbar-item">ホーム</a>
@@ -26,5 +37,36 @@
 
     <script src="{{ url_for('static', path='/js/main.js') }}"></script>
     {% block extra_js %}{% endblock %}
+    
+    <!-- 利用規約同意チェック: /terms ページ以外は同意済みか localStorage を確認し、未同意なら /terms へリダイレクト -->
+    <script>
+    (function(){
+        try {
+            const p = window.location.pathname || '/';
+            const agreed = localStorage.getItem('termsAgreed');
+            
+            // 利用規約ページの場合はナビゲーションを無効化
+            if (p.startsWith('/terms')) {
+                const navbar = document.getElementById('mainNavbar');
+                if (navbar) {
+                    navbar.classList.add('navbar-disabled');
+                }
+                return;
+            }
+            
+            // 除外パス: /licenses, static ファイル, favicon, openapi, API プレフィックス
+            if (p.startsWith('/licenses') || p.startsWith('/static') || p.startsWith('/favicon.ico') || p.startsWith('/api/')) return;
+            
+            // 未同意の場合はリダイレクト
+            if (!agreed) {
+                // 同意ページから戻れるように現在のパスを保存
+                try { 
+                    localStorage.setItem('termsPrevPath', window.location.pathname + window.location.search); 
+                } catch(e){}
+                window.location.href = '/terms';
+            }
+        } catch(e){}
+    })();
+    </script>
 </body>
 </html>

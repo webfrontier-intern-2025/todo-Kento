@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}利用規約 - TODO App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="terms-container">
+        <h1>📋 利用規約</h1>
+        
+        <div class="terms-notice">
+            <p>⚠️ 続行するには、利用規約に同意する必要があります</p>
+        </div>
+        
+        <div class="terms-content">
+            <h2>1. はじめに</h2>
+            <p>このTODOアプリケーション（以下「本サービス」）をご利用いただく前に、以下の利用規約をお読みいただき、同意いただく必要があります。</p>
+            
+            <h2>2. サービスの利用</h2>
+            <p>本サービスは、個人的なTODO管理のために提供されています。</p>
+            
+            <h2>3. データの取り扱い</h2>
+            <p>ユーザーが入力したデータは、ローカルストレージに保存されます。</p>
+            
+            <h2>4. 免責事項</h2>
+            <p>本サービスの利用により生じた損害について、当方は一切の責任を負いません。</p>
+        </div>
+
+        <div class="terms-agreement">
+            <label class="agreement-checkbox">
+                <input type="checkbox" id="agreeCheckbox">
+                <span>上記の利用規約に同意します</span>
+            </label>
+            <button id="agreeButton" class="cta-button" disabled>同意して始める</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.terms-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.terms-notice {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.terms-notice p {
+    margin: 0;
+    color: #856404;
+    font-weight: 500;
+}
+
+.terms-content {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 2rem 0;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+}
+
+.terms-content h2 {
+    color: #2c3e50;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.terms-content h2:first-child {
+    margin-top: 0;
+}
+
+.terms-agreement {
+    text-align: center;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.agreement-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.agreement-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+#agreeButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+// すべてのリンククリックを防止（利用規約ページ内）
+document.addEventListener('click', function(e) {
+    const target = e.target.closest('a');
+    if (target && target.getAttribute('href') !== '/terms') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+}, true);
+
+const agreeCheckbox = document.getElementById('agreeCheckbox');
+const agreeButton = document.getElementById('agreeButton');
+
+agreeCheckbox.addEventListener('change', () => {
+    agreeButton.disabled = !agreeCheckbox.checked;
+});
+
+agreeButton.addEventListener('click', () => {
+    localStorage.setItem('termsAgreed', 'true');
+    localStorage.setItem('termsAgreedDate', new Date().toISOString());
+    
+    // 同意後は直前のページに戻すかトップへ
+    const prev = localStorage.getItem('termsPrevPath');
+    if (prev && prev !== '/terms') {
+        localStorage.removeItem('termsPrevPath');
+        window.location.href = prev;
+    } else {
+        window.location.href = '/';
+    }
+});
+</script>
+{% endblock %}

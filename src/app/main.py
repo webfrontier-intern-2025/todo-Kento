@@ -217,3 +217,9 @@ async def read_tags_page(request: Request):
 async def read_licenses_page(request: Request):
     """オープンソースライセンスページ"""
     return templates.TemplateResponse("licenses.html", {"request": request})
+
+
+@app.get("/terms", include_in_schema=False)
+async def read_terms_page(request: Request):
+    """利用規約ページ"""
+    return templates.TemplateResponse("terms.html", {"request": request})
