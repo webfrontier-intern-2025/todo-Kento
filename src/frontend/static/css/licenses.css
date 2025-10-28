@@ -1,0 +1,133 @@
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.container h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.container > p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.license-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.license-item {
+    background: #fff;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.license-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.license-item h3 {
+    font-size: 1.8em;
+    margin: 0 0 15px 0;
+    color: #0366d6;
+}
+
+.license-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+.license-meta span {
+    background: #f6f8fa;
+    padding: 5px 12px;
+    border-radius: 4px;
+    color: #586069;
+}
+
+.license-description {
+    color: #24292e;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.license-text {
+    background: #f6f8fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 15px 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85em;
+    line-height: 1.5;
+    color: #24292e;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.license-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #0366d6;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.license-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.license-notice {
+    background: #fffbdd;
+    border: 1px solid #e7dba8;
+    border-radius: 8px;
+    padding: 25px;
+    margin-top: 40px;
+}
+
+.license-notice h2 {
+    font-size: 1.5em;
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+}
+
+.license-notice p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px 15px;
+    }
+
+    .container h1 {
+        font-size: 2em;
+    }
+
+    .license-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .license-item {
+        padding: 20px;
+    }
+}

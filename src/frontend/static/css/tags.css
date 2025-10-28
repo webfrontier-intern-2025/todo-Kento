@@ -1,0 +1,239 @@
+/* ==================== タグ追加フォーム ==================== */
+.add-tag {
+    margin-bottom: 30px;
+}
+
+.add-tag form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.add-tag input[type="text"] {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.add-tag input[type="text"]:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.add-tag input[type="text"].field-error-highlight {
+    border-color: #e74c3c;
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* カラーピッカーラッパー */
+.color-picker-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.color-picker-wrapper label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+.color-picker-wrapper input[type="color"] {
+    width: 60px;
+    height: 40px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 2px;
+    transition: border-color 0.3s;
+}
+
+.color-picker-wrapper input[type="color"]:hover {
+    border-color: #667eea;
+}
+
+#addTagButton {
+    padding: 15px 30px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#addTagButton:hover {
+    background: #5568d3;
+}
+
+/* ==================== タグ一覧 ==================== */
+.tags-section {
+    margin-top: 30px;
+}
+
+.tags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* タグアイテム */
+.tag-item {
+    background: #f9f9f9;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.tag-item:hover {
+    background: #f0f0f0;
+}
+
+/* 表示モード */
+.tag-view {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+}
+
+/* タグ情報（クリック可能エリア） */
+.tag-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.tag-info:hover {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+/* 色プレビュー */
+.tag-color-preview {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tag-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* 編集モード */
+.tag-edit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+}
+
+.edit-name-input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #667eea;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.edit-name-input:focus {
+    outline: none;
+    border-color: #5568d3;
+}
+
+.edit-name-input.field-error-highlight {
+    border-color: #e74c3c;
+    animation: shake 0.3s ease-in-out;
+}
+
+.edit-color-input {
+    width: 50px;
+    height: 40px;
+    border: 2px solid #667eea;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 2px;
+}
+
+/* ==================== アクションボタン ==================== */
+.tag-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.tag-edit-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.delete-button {
+    padding: 8px 16px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.delete-button:hover {
+    background: #c0392b;
+}
+
+.update-button {
+    padding: 8px 16px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.update-button:hover {
+    background: #5568d3;
+}
+
+.cancel-button {
+    padding: 8px 16px;
+    background: #95a5a6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.cancel-button:hover {
+    background: #7f8c8d;
+}
+
+/* 空の状態 */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 16px;
+}

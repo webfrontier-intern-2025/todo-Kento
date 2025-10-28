@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TODO App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- ナビゲーションバー -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="navbar-menu">
+                <a href="/" class="navbar-item">ホーム</a>
+                <a href="/todo-list" class="navbar-item">TODOリスト</a>
+                <a href="/todos" class="navbar-item">TODO管理</a>
+                <a href="/tags" class="navbar-item">タグ管理</a>
+                <a href="/licenses" class="navbar-item">ライセンス</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- メインコンテンツ -->
+    {% block content %}{% endblock %}
+
+    <script src="{{ url_for('static', path='/js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

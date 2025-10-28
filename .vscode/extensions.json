@@ -1,3 +1,4 @@
+// 拡張機能の推奨設定
 {
     "recommendations": [
         "ms-python.python",

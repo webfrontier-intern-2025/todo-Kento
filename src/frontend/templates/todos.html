@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}TODO管理 - TODO App{% endblock %}
+
+{% block extra_css %}
+<!-- TODO専用CSS -->
+<link rel="stylesheet" href="{{ url_for('static', path='/css/todos.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>TODO管理</h1>
+
+    <!-- Todo追加フォーム -->
+    <div class="add-todo">
+        <!-- 入力とボタンを先に配置 -->
+        <div class="todo-input-wrapper">
+            <input type="text" id="todoInput" placeholder="新しいTODOを入力...">
+            <button id="addButton">TODO追加</button>
+        </div>
+        
+        <!-- タグ選択エリア -->
+        <div id="tagSelection" class="tag-selection">
+            <!-- タグがここに表示されます -->
+        </div>
+        
+        <!-- クイックタグ追加 -->
+        <div class="quick-tag-add">
+            <input type="text" id="quickTagInput" placeholder="新しいタグを追加...">
+            <input type="color" id="quickTagColor" value="#667eea" title="タグの色">
+            <button id="quickAddTagButton">タグを追加</button>
+        </div>
+    </div>
+
+    <!-- Todoリスト -->
+    <ul id="todoList" class="todo-list">
+        <!-- TODOがここに表示されます -->
+    </ul>
+</div>
+
+<!-- TODO編集モーダル -->
+<div id="edit-todo-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-todo-modal">&times;</span>
+        <h2>TODOを編集</h2>
+        <form id="edit-todo-form">
+            <input type="hidden" id="edit-todo-id">
+            <div class="form-group">
+                <label for="edit-todo-content">内容</label>
+                <input type="text" id="edit-todo-content" required>
+            </div>
+            <div class="form-group">
+                <label>タグ</label>
+                <div id="edit-tag-selection" class="tag-selection">
+                    <!-- タグがここに表示されます -->
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="submit" class="btn-primary">更新</button>
+                <button type="button" class="btn-danger" id="delete-todo-in-modal">削除</button>
+                <button type="button" class="btn-secondary" id="cancel-edit-todo">キャンセル</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', path='/js/todos.js') }}"></script>
+{% endblock %}

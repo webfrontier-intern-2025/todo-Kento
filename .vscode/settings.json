@@ -1,3 +1,4 @@
+// VSCode/拡張機能の設定ファイル
 {
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,

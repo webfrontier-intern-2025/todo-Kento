@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}タグ管理 - TODO App{% endblock %}
+
+{% block extra_css %}
+<!-- タグ管理専用CSS -->
+<link rel="stylesheet" href="{{ url_for('static', path='/css/tags.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>タグ管理</h1>
+    
+    <!-- タグ追加フォーム -->
+    <div class="add-tag">
+        <form id="add-tag-form">
+            <input type="text" id="tag-name" name="name" required placeholder="新しいタグを入力...">
+            <div class="color-picker-wrapper">
+                <label for="tag-color">色</label>
+                <input type="color" id="tag-color" name="color" value="#667eea">
+            </div>
+            <button type="submit" id="addTagButton">タグを追加</button>
+        </form>
+    </div>
+
+    <!-- タグ一覧 -->
+    <div class="tags-section">
+        <h2>登録済みタグ</h2>
+        <div id="tags-list" class="tags-list">
+            <!-- タグがここに表示されます -->
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', path='/js/tags.js') }}"></script>
+{% endblock %}

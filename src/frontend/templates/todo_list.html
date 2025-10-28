@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}TODOリスト - TODO App{% endblock %}
+
+{% block extra_css %}
+<!-- TODOリスト専用CSS -->
+<link rel="stylesheet" href="{{ url_for('static', path='/css/todo_list.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>📊 TODOリスト</h1>
+
+    <!-- フィルター機能 -->
+    <div class="filter-section">
+        <div class="filter-group">
+            <label>状態:</label>
+            <select id="statusFilter">
+                <option value="all">すべて</option>
+                <option value="active">未完了のみ</option>
+                <option value="completed">完了済みのみ</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>タグ:</label>
+            <select id="tagFilter">
+                <option value="all">すべて</option>
+                <!-- タグがここに追加されます -->
+            </select>
+        </div>
+    </div>
+
+    <!-- テーブル表示 -->
+    <div class="table-wrapper">
+        <table class="todo-table">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">完了</th>
+                    <th style="width: auto;">内容</th>
+                    <th style="width: 200px;">タグ</th>
+                    <th style="width: 150px;">作成日時</th>
+                </tr>
+            </thead>
+            <tbody id="todoTableBody">
+                <!-- テーブル行がここに表示されます -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 統計情報 -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <div class="stat-label">全TODO</div>
+            <div class="stat-value" id="totalCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">未完了</div>
+            <div class="stat-value" id="activeCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">完了済み</div>
+            <div class="stat-value" id="completedCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">完了率</div>
+            <div class="stat-value" id="completionRate">0%</div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', path='/js/todo_list.js') }}"></script>
+{% endblock %}

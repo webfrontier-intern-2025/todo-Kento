@@ -1,3 +1,4 @@
+// debugpyを使用したデバッグ構成
 {
     "version": "0.1.0",
     "configurations": [

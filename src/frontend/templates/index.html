@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}ホーム - TODO App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero">
+        <h1>📝 TODO App へようこそ</h1>
+        <p>シンプルで使いやすいTODO管理アプリケーション</p>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3>TODO管理</h3>
+            <p>シンプルで使いやすいTODO管理機能</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>リスト表示</h3>
+            <p>テーブル形式で一覧表示・フィルタリング</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏷️</div>
+            <h3>タグ管理</h3>
+            <p>カラフルなタグでTODOを分類</p>
+        </div>
+    </div>
+
+    <div class="cta-section">
+        <a href="/todo-list" class="cta-button secondary">リストを見る</a>
+        <a href="/todos" class="cta-button">TODO管理を始める</a>
+    </div>
+</div>
+{% endblock %}

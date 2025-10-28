@@ -1,48 +1,64 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app import database
-from crud import todo
-from schemas.schema import CreateTodoSchema, TodoSchema, UpdateTodoSchema
+from crud import todo as todo_crud
+from app.database import get_db
+from schemas.todo import TodoCreate, TodoUpdate, TodoResponse
 
 router = APIRouter()
 
 
-@router.get("/", response_model=list[TodoSchema])
-def read(db: Session = Depends(database.get_db), skip: int = 0, limit: int = 100):
-    """
-    Retrieve todos.
-    """
-
-    todos = todo.get(db=db, skip=skip, limit=limit)
-    return todos
+@router.post("/todo/", response_model=TodoResponse, status_code=201)
+def create_todo(todo_schema: TodoCreate, db: Session = Depends(get_db)):
+    return todo_crud.create(db, todo_schema)
 
 
-@router.get("/{todo_id}", response_model=TodoSchema)
-def read_by_id(todo_id: int, db: Session = Depends(database.get_db)):
-    todo_model = todo.get_by_id(db, todo_id)
-    if not todo_model:
-        raise HTTPException(status_code=404, detail="Todo not found")
-    return TodoSchema.model_validate(todo_model)
+@router.get("/todo/", response_model=list[TodoResponse])
+def list_todos(db: Session = Depends(get_db)):
+    return todo_crud.read_all(db)
 
 
-@router.post("/", response_model=TodoSchema)
-def create(todo_schema: CreateTodoSchema, db: Session = Depends(database.get_db)):
-    todo_model = todo.create(db, todo_schema)
-    return TodoSchema.model_validate(todo_model)
+@router.get("/todo/{todo_id}", response_model=TodoResponse)
+def get_todo(todo_id: int, db: Session = Depends(get_db)):
+    todo = todo_crud.read(db, todo_id)
+    if not todo:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "NOT_FOUND",
+                "message": "TODOが見つかりません。",
+                "details": [],
+            },
+        )
+    return todo
 
 
-@router.put("/{todo_id}")
-def update(
-    todo_id: int, todo_schema: UpdateTodoSchema, db: Session = Depends(database.get_db)
-):
-    todo_model = todo.update(db, todo_id, todo_schema)
-    if not todo_model:
-        raise HTTPException(status_code=404, detail="Todo not found")
-    return Response(status_code=status.HTTP_200_OK)
+@router.put("/todo/{todo_id}", response_model=TodoResponse)
+def update_todo(todo_id: int, todo_schema: TodoUpdate, db: Session = Depends(get_db)):
+    todo = todo_crud.read(db, todo_id)
+    if not todo:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "NOT_FOUND",
+                "message": "TODOが見つかりません。",
+                "details": [],
+            },
+        )
+    return todo_crud.update(db, todo, todo_schema)
 
 
-@router.delete("/{todo_id}")
-def delete(todo_id: int, db: Session = Depends(database.get_db)):
-    todo.delete(db, todo_id)
-    return Response(status_code=status.HTTP_200_OK)
+@router.delete("/todo/{todo_id}", status_code=204)
+def delete_todo(todo_id: int, db: Session = Depends(get_db)):
+    todo = todo_crud.read(db, todo_id)
+    if not todo:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "NOT_FOUND",
+                "message": "TODOが見つかりません。",
+                "details": [],
+            },
+        )
+    todo_crud.delete(db, todo)
+    return None

@@ -9,3 +9,5 @@ uvicorn[standard]
 debugpy
 alembic
 sqlalchemy-seeder
+jinja2
+gunicorn

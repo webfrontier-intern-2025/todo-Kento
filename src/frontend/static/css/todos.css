@@ -1,0 +1,237 @@
+/* ==================== TODO追加フォーム ==================== */
+.add-todo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+/* 入力エリアとボタンを横並び */
+.todo-input-wrapper {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+}
+
+#todoInput {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+#todoInput:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+#todoInput.field-error-highlight {
+    border-color: #e74c3c;
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+#addButton {
+    padding: 15px 30px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    white-space: nowrap;
+}
+
+#addButton:hover {
+    background: #5568d3;
+}
+
+/* ==================== タグ選択エリア ==================== */
+.tag-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+/* タグチェックボックス（色対応） */
+.tag-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tag-checkbox:hover {
+    border-color: var(--tag-color, #667eea);
+}
+
+.tag-checkbox input[type="checkbox"] {
+    cursor: pointer;
+}
+
+/* チェック時に色を適用 */
+.tag-checkbox.checked {
+    background: var(--tag-color, #667eea);
+    border-color: var(--tag-color, #667eea);
+    color: white;
+}
+
+/* ==================== クイックタグ追加 ==================== */
+.quick-tag-add {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: #f0f7ff;
+    border-radius: 8px;
+    border: 2px dashed #667eea;
+    align-items: center;
+}
+
+.quick-tag-add input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.quick-tag-add input[type="text"]:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.quick-tag-add input[type="text"].field-error-highlight {
+    border-color: #e74c3c;
+    animation: shake 0.3s ease-in-out;
+}
+
+/* クイックタグのカラーピッカー */
+.quick-tag-add input[type="color"] {
+    width: 50px;
+    height: 40px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 2px;
+    transition: border-color 0.3s;
+}
+
+.quick-tag-add input[type="color"]:hover {
+    border-color: #667eea;
+}
+
+#quickAddTagButton {
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    white-space: nowrap;
+}
+
+#quickAddTagButton:hover {
+    background: #5568d3;
+}
+
+/* ==================== TODOリスト ==================== */
+.todo-list {
+    list-style: none;
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: all 0.3s;
+}
+
+.todo-item:hover {
+    background: #f0f0f0;
+    transform: translateX(5px);
+}
+
+/* 完了済みTODO */
+.todo-item.completed {
+    opacity: 0.6;
+}
+
+.todo-item.completed .todo-content {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.todo-checkbox {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.todo-content {
+    flex: 1;
+    font-size: 16px;
+    color: #333;
+}
+
+/* ==================== TODOのタグ表示 ==================== */
+.todo-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* タグバッジ（色はインラインスタイルで適用） */
+.tag {
+    padding: 4px 12px;
+    color: white;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ==================== TODOの編集ボタン ==================== */
+.edit-todo-button {
+    padding: 8px 16px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.edit-todo-button:hover {
+    background: #5568d3;
+}
+
+/* ==================== モーダル内のフィールドエラー ==================== */
+#edit-todo-content.field-error-highlight {
+    border-color: #e74c3c !important;
+    animation: shake 0.3s ease-in-out;
+}
