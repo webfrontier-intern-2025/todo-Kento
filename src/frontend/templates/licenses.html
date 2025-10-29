@@ -1,3 +1,4 @@
+// ...existing code...
 {% extends "base.html" %}
 
 {% block title %}オープンソースライセンス - TODO App{% endblock %}
@@ -9,7 +10,7 @@
 {% block content %}
 <div class="container">
     <h1>📄 オープンソースライセンス</h1>
-    <p>このアプリケーションは、以下のオープンソースソフトウェアを使用しています。</p>
+    <p>このアプリケーションは、以下のオープンソースソフトウェアを使用しています。各項目は簡易的な説明とライセンス種別を示しています。詳細は各プロジェクトのリポジトリをご確認ください。</p>
     
     <div class="license-list">
         <!-- FastAPI -->
@@ -17,170 +18,72 @@
             <h3>FastAPI</h3>
             <div class="license-meta">
                 <span>📦 バージョン: 0.104+</span>
-                <span>📜 ライセンス: MIT License</span>
+                <span>📜 ライセンス: MIT</span>
                 <span>👤 作者: Sebastián Ramírez</span>
             </div>
-            <p class="license-description">モダンで高速なWeb APIフレームワーク。Python 3.7+の型ヒントを使用した、高性能で使いやすいフレームワークです。</p>
-            <div class="license-text">The MIT License (MIT)
-
-Copyright (c) 2018 Sebastián Ramírez
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</div>
-            <a href="https://github.com/tiangolo/fastapi" class="license-link" target="_blank">
-                GitHubで詳細を見る →
-            </a>
+            <p class="license-description">Pythonの型ヒントを活用したモダンで高速なWeb APIフレームワーク。</p>
+            <p class="license-note">詳細なライセンスは公式リポジトリを参照してください。</p>
+            <a href="https://github.com/tiangolo/fastapi" class="license-link" target="_blank">GitHubで詳細を見る →</a>
         </div>
-        
+
         <!-- SQLAlchemy -->
         <div class="license-item">
             <h3>SQLAlchemy</h3>
             <div class="license-meta">
                 <span>📦 バージョン: 2.0+</span>
-                <span>📜 ライセンス: MIT License</span>
+                <span>📜 ライセンス: MIT</span>
                 <span>👤 作者: Mike Bayer</span>
             </div>
-            <p class="license-description">Python向けの最も人気のあるSQLツールキットおよびORM（Object-Relational Mapping）ライブラリです。</p>
-            <div class="license-text">Copyright 2005-2024 SQLAlchemy authors and contributors.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</div>
-            <a href="https://github.com/sqlalchemy/sqlalchemy" class="license-link" target="_blank">
-                GitHubで詳細を見る →
-            </a>
+            <p class="license-description">Python向けのORMおよびSQLツールキット。</p>
+            <a href="https://github.com/sqlalchemy/sqlalchemy" class="license-link" target="_blank">GitHubで詳細を見る →</a>
         </div>
-        
+
         <!-- Pydantic -->
         <div class="license-item">
             <h3>Pydantic</h3>
             <div class="license-meta">
                 <span>📦 バージョン: 2.0+</span>
-                <span>📜 ライセンス: MIT License</span>
+                <span>📜 ライセンス: MIT</span>
                 <span>👤 作者: Samuel Colvin</span>
             </div>
-            <p class="license-description">Pythonの型アノテーションを使用したデータバリデーションとシリアライゼーションライブラリです。</p>
-            <div class="license-text">The MIT License (MIT)
-
-Copyright (c) 2017 to present Pydantic Services Inc. and individual contributors.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</div>
-            <a href="https://github.com/pydantic/pydantic" class="license-link" target="_blank">
-                GitHubで詳細を見る →
-            </a>
+            <p class="license-description">型アノテーションを用いたデータバリデーションとシリアライゼーション。</p>
+            <a href="https://github.com/pydantic/pydantic" class="license-link" target="_blank">GitHubで詳細を見る →</a>
         </div>
-        
+
         <!-- Uvicorn -->
         <div class="license-item">
             <h3>Uvicorn</h3>
             <div class="license-meta">
                 <span>📦 バージョン: 0.24+</span>
-                <span>📜 ライセンス: BSD 3-Clause License</span>
+                <span>📜 ライセンス: BSD 3-Clause</span>
                 <span>👤 作者: Encode OSS</span>
             </div>
-            <p class="license-description">uvloopとhttptoolsを使用した、高速なASGI Webサーバーの実装です。</p>
-            <div class="license-text">Copyright © 2017-present, Encode OSS Ltd. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-* Neither the name of the copyright holder nor the names of its
-  contributors may be used to endorse or promote products derived from
-  this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</div>
-            <a href="https://github.com/encode/uvicorn" class="license-link" target="_blank">
-                GitHubで詳細を見る →
-            </a>
+            <p class="license-description">ASGI準拠の高速Webサーバー（開発／本番で利用可能）。</p>
+            <a href="https://github.com/encode/uvicorn" class="license-link" target="_blank">GitHubで詳細を見る →</a>
         </div>
-        
+
         <!-- Alembic -->
         <div class="license-item">
             <h3>Alembic</h3>
             <div class="license-meta">
                 <span>📦 バージョン: 1.12+</span>
-                <span>📜 ライセンス: MIT License</span>
+                <span>📜 ライセンス: MIT</span>
                 <span>👤 作者: Mike Bayer</span>
             </div>
-            <p class="license-description">SQLAlchemy向けの軽量なデータベースマイグレーションツールです。</p>
-            <a href="https://github.com/sqlalchemy/alembic" class="license-link" target="_blank">
-                GitHubで詳細を見る →
-            </a>
+            <p class="license-description">SQLAlchemy用のデータベースマイグレーションツール。</p>
+            <a href="https://github.com/sqlalchemy/alembic" class="license-link" target="_blank">GitHubで詳細を見る →</a>
         </div>
-        
+
         <!-- Jinja2 -->
         <div class="license-item">
             <h3>Jinja2</h3>
             <div class="license-meta">
                 <span>📦 バージョン: 3.1+</span>
-                <span>📜 ライセンス: BSD 3-Clause License</span>
+                <span>📜 ライセンス: BSD 3-Clause</span>
                 <span>👤 作者: Armin Ronacher</span>
             </div>
-            <p class="license-description">Djangoのテンプレートエンジンに触発された、高速で表現力豊かなPythonテンプレートエンジンです。</p>
-            <a href="https://github.com/pallets/jinja" class="license-link" target="_blank">
-                GitHubで詳細を見る →
-            </a>
+            <p class="license-description">テンプレートレンダリングに使われるテンプレートエンジン（HTML生成に使用）。</p>
+            <a href="https://github.com/pallets/jinja" class="license-link" target="_blank">GitHubで詳細を見る →</a>
         </div>
 
         <!-- python-multipart -->
@@ -188,12 +91,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</div>
             <h3>python-multipart</h3>
             <div class="license-meta">
                 <span>📦 バージョン: 0.0.6+</span>
-                <span>📜 ライセンス: Apache License 2.0</span>
+                <span>📜 ライセンス: Apache 2.0</span>
             </div>
-            <p class="license-description">Pythonでmultipart/form-dataを扱うためのライブラリです。</p>
-            <a href="https://github.com/andrew-d/python-multipart" class="license-link" target="_blank">
-                GitHubで詳細を見る →
-            </a>
+            <p class="license-description">multipart/form-data（ファイルアップロード等）を処理するライブラリ。</p>
+            <a href="https://github.com/andrew-d/python-multipart" class="license-link" target="_blank">GitHubで詳細を見る →</a>
         </div>
 
         <!-- aiosqlite -->
@@ -201,26 +102,122 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</div>
             <h3>aiosqlite</h3>
             <div class="license-meta">
                 <span>📦 バージョン: 0.19+</span>
-                <span>📜 ライセンス: MIT License</span>
+                <span>📜 ライセンス: MIT</span>
             </div>
-            <p class="license-description">SQLite3の非同期バージョンで、asyncioと統合されています。</p>
-            <a href="https://github.com/omnilib/aiosqlite" class="license-link" target="_blank">
-                GitHubで詳細を見る →
-            </a>
+            <p class="license-description">SQLiteをasyncioで扱うための非同期ラッパー。</p>
+            <a href="https://github.com/omnilib/aiosqlite" class="license-link" target="_blank">GitHubで詳細を見る →</a>
+        </div>
+
+        <!-- python-dotenv -->
+        <div class="license-item">
+            <h3>python-dotenv</h3>
+            <div class="license-meta">
+                <span>📜 ライセンス: MIT</span>
+            </div>
+            <p class="license-description">.envファイルから環境変数を読み込むユーティリティ（開発環境で便利）。</p>
+            <a href="https://github.com/theskumar/python-dotenv" class="license-link" target="_blank">GitHubで詳細を見る →</a>
+        </div>
+
+        <!-- debugpy -->
+        <div class="license-item">
+            <h3>debugpy</h3>
+            <div class="license-meta">
+                <span>📜 ライセンス: MIT</span>
+            </div>
+            <p class="license-description">Python用のデバッグアダプター（VS Codeなどと連携してデバッグを行う）。</p>
+            <a href="https://github.com/microsoft/debugpy" class="license-link" target="_blank">GitHubで詳細を見る →</a>
+        </div>
+
+        <!-- sqlalchemy-seeder -->
+        <div class="license-item">
+            <h3>sqlalchemy-seeder</h3>
+            <div class="license-meta">
+                <span>📜 ライセンス: MIT</span>
+            </div>
+            <p class="license-description">テストや開発用にダミーデータをシードするためのユーティリティ。</p>
+            <a href="https://github.com/rochacbruno/sqlalchemy-seeder" class="license-link" target="_blank">GitHubで詳細を見る →</a>
+        </div>
+
+        <!-- fastapi-route-logger-middleware -->
+        <div class="license-item">
+            <h3>fastapi-route-logger-middleware</h3>
+            <div class="license-meta">
+                <span>📜 ライセンス: MIT (プロジェクトにより異なる場合あり)</span>
+            </div>
+            <p class="license-description">リクエスト/レスポンスのルートロギングを行うミドルウェア。</p>
+            <a href="https://pypi.org/project/fastapi-route-logger-middleware/" class="license-link" target="_blank">PyPIで詳細を見る →</a>
+        </div>
+
+        <!-- gunicorn -->
+        <div class="license-item">
+            <h3>Gunicorn</h3>
+            <div class="license-meta">
+                <span>📜 ライセンス: MIT</span>
+            </div>
+            <p class="license-description">WSGI互換のUNIX向けPython HTTPサーバー（主に同期アプリ用）。</p>
+            <a href="https://github.com/benoitc/gunicorn" class="license-link" target="_blank">GitHubで詳細を見る →</a>
+        </div>
+
+        <!-- black -->
+        <div class="license-item">
+            <h3>black</h3>
+            <div class="license-meta">
+                <span>📜 ライセンス: MIT</span>
+            </div>
+            <p class="license-description">意見atedなPythonコードフォーマッター（開発時の整形に使用）。</p>
+            <a href="https://github.com/psf/black" class="license-link" target="_blank">GitHubで詳細を見る →</a>
+        </div>
+
+        <!-- flake8 -->
+        <div class="license-item">
+            <h3>flake8</h3>
+            <div class="license-meta">
+                <span>📜 ライセンス: MIT</span>
+            </div>
+            <p class="license-description">Pythonコードの静的解析（リンター）。</p>
+            <a href="https://gitlab.com/pycqa/flake8" class="license-link" target="_blank">プロジェクトで詳細を見る →</a>
+        </div>
+
+        <!-- requests -->
+        <div class="license-item">
+            <h3>requests</h3>
+            <div class="license-meta">
+                <span>📦 バージョン: 2.x</span>
+                <span>📜 ライセンス: Apache 2.0</span>
+            </div>
+            <p class="license-description">使いやすいHTTPクライアントライブラリ（外部API呼び出し等）。</p>
+            <a href="https://github.com/psf/requests" class="license-link" target="_blank">GitHubで詳細を見る →</a>
+        </div>
+
+        <!-- Frontend -->
+        <div class="license-item">
+            <h3>フロントエンド</h3>
+            <div class="license-meta">
+                <span>📜 ライセンス: プロジェクトに準拠</span>
+            </div>
+            <p class="license-description">Vanilla JavaScript（フレームワーク無し）、HTML5（Jinja2テンプレート）、およびカスタムCSSを使用しています。フロントエンドの資産は本リポジトリに含まれます。</p>
+        </div>
+
+        <!-- Database -->
+        <div class="license-item">
+            <h3>データベース</h3>
+            <div class="license-meta">
+                <span>📦 デフォルト: SQLite</span>
+                <span>📦 オプション: PostgreSQL</span>
+            </div>
+            <p class="license-description">デフォルトはSQLite（組み込みDB）。PostgreSQLはオプションでサポート（.env.exampleに設定例あり）。</p>
         </div>
     </div>
     
     <div class="license-notice">
         <h2>📝 ライセンス表記について</h2>
         <p>
-            このアプリケーションは、上記のオープンソースソフトウェアに依存しています。
-            各ソフトウェアのライセンス条項に従い、適切な表記を行っています。
-            詳細なライセンス情報や最新のバージョン情報については、各プロジェクトのリポジトリをご確認ください。
+            各ライブラリのライセンスは基本的にMIT、BSD、またはApache 2.0が中心です。配布や商用利用の際は各プロジェクトの公式ライセンス条項を確認してください。（詳細な条項や最新バージョン情報は各リポジトリを参照してください。）
         </p>
         <p style="margin-top: 15px;">
-            これらのプロジェクトに貢献してくださった開発者の皆様、
-            そしてオープンソースコミュニティに深く感謝いたします。
+            これらのプロジェクトに貢献してくださった開発者の皆様、そしてオープンソースコミュニティに深く感謝いたします。
         </p>
     </div>
 </div>
 {% endblock %}
+// ...existing code...
