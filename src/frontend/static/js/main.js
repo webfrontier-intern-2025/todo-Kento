@@ -1,8 +1,14 @@
-// 共通のJavaScript処理
+// 全体概要（処理の流れ）:
+// - ページ読み込み時にナビゲーションのハイライトを設定。
+// - ネットワーク状態の監視（online/offline）でユーザーに通知。
+// - apiFetch を中心に API 呼び出しを統一し、エラーハンドリングを一元化。
+// - submitForm でフォーム送信をラップしてフィールドエラー表示と共通トーストを行う。
+// - ユーティリティ関数（showToast, clearFieldErrors, applyFieldErrors）は UI フィードバックに使用。
 
 console.log('TODO App loaded');
 
 // ナビゲーションの現在のページをハイライト
+// 流れ: DOMContentLoaded 時に現在の pathname と nav の href を比較し、該当リンクを強調する
 document.addEventListener('DOMContentLoaded', () => {
     const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll('nav a');
@@ -16,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== 統一エラーハンドリング/共通Fetch =====
+
+// API エラーを表すカスタムエラークラス
+// 流れ: apiFetch 内で HTTP エラー情報を集めて ApiError を投げる
 class ApiError extends Error {
   constructor({ status, code, message, details = [], requestId }) {
     super(message);
@@ -27,6 +36,8 @@ class ApiError extends Error {
   }
 }
 
+// トースト表示ユーティリティ
+// 流れ: 簡易トースト要素を作成 -> 一定時間後に自動削除
 function showToast(message, type = "error") {
   const el = document.createElement("div");
   el.className = `toast ${type}`;
@@ -46,6 +57,7 @@ function showToast(message, type = "error") {
   setTimeout(() => el.remove(), 3000);
 }
 
+// ステータスコードに対するユーザ向けメッセージマップ
 const _statusMessage = (status) => ({
   400: "入力内容を確認してください。",
   401: "認証が必要です。再ログインしてください。",
@@ -57,6 +69,11 @@ const _statusMessage = (status) => ({
   500: "問題が発生しました。時間をおいて再試行してください。"
 }[status] || "処理に失敗しました。");
 
+// 共通の fetch ラッパー
+// 流れ:
+// 1) fetch 実行（タイムアウト/ネットワークエラーは ApiError を投げる）
+// 2) レスポンスが JSON ならパース
+// 3) HTTP エラーなら ApiError を throw、成功時はデータを返す
 async function apiFetch(path, { method = "GET", headers = {}, body, signal } = {}) {
   const res = await fetch(path, {
     method,
@@ -83,11 +100,15 @@ async function apiFetch(path, { method = "GET", headers = {}, body, signal } = {
   return data;
 }
 
+// フォーム関連ユーティリティ
+// clearFieldErrors: 古いエラー表示を削除
 function clearFieldErrors(formEl) {
   formEl.querySelectorAll(".field-error").forEach((el) => el.remove());
   formEl.querySelectorAll(".error").forEach((el) => el.classList.remove("error"));
 }
 
+// applyFieldErrors: バックエンドの詳細エラーをフォームに反映
+// 流れ: details 配列から該当フィールドを探し、エラーメッセージを追加
 function applyFieldErrors(formEl, details) {
   details.forEach(({ field, message }) => {
     if (!field) return;
@@ -102,6 +123,12 @@ function applyFieldErrors(formEl, details) {
   });
 }
 
+// submitForm: フォーム送信の共通処理ラッパー
+// 流れ:
+// 1) 送信ボタンを無効化しフィールドエラーをクリア
+// 2) FormData をオブジェクト化して apiFetch で送信
+// 3) 成功時は成功トーストを表示、エラー時はフィールドエラーを適用してトースト表示
+// 4) ボタンを再度有効化して結果を返す / 例外は再送出
 async function submitForm(formEl, endpoint, method = "POST") {
   const btn = formEl.querySelector("button[type=submit], input[type=submit]");
   if (btn) btn.disabled = true;
@@ -125,5 +152,73 @@ async function submitForm(formEl, endpoint, method = "POST") {
   }
 }
 
+// 共通確認ダイアログ（モーダル）を表示して Promise<boolean> を返す
+// 流れ:
+// - confirm-modal が見つからなければフォールバックで window.confirm を使う
+// - 表示中はキーダウン（Escape = キャンセル, Enter = 確定）に対応
+// - 外側クリックでもキャンセルする
+function showConfirm(message, { confirmText = '削除する', cancelText = 'キャンセル', title = '確認' } = {}) {
+  const modal = document.getElementById('confirm-modal');
+  if (!modal) {
+    return Promise.resolve(window.confirm(message));
+  }
+
+  return new Promise((resolve) => {
+    const titleEl = modal.querySelector('#confirm-modal-title');
+    const msgEl = modal.querySelector('#confirm-modal-message');
+    const btnConfirm = modal.querySelector('#confirm-modal-confirm');
+    const btnCancel = modal.querySelector('#confirm-modal-cancel');
+
+    // 初期セット
+    titleEl.textContent = title;
+    msgEl.textContent = message;
+    btnConfirm.textContent = confirmText;
+    btnCancel.textContent = cancelText;
+
+    // 表示
+    modal.style.display = 'flex';
+
+    // イベントハンドラ（cleanup で解除）
+    const cleanup = () => {
+      modal.style.display = 'none';
+      btnConfirm.removeEventListener('click', onConfirm);
+      btnCancel.removeEventListener('click', onCancel);
+      modal.removeEventListener('click', onBackdropClick);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+
+    const onConfirm = () => {
+      cleanup();
+      resolve(true);
+    };
+
+    const onCancel = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    const onBackdropClick = (e) => {
+      if (e.target === modal) {
+        onCancel();
+      }
+    };
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') onCancel();
+      if (e.key === 'Enter') onConfirm();
+    };
+
+    btnConfirm.addEventListener('click', onConfirm);
+    btnCancel.addEventListener('click', onCancel);
+    modal.addEventListener('click', onBackdropClick);
+    window.addEventListener('keydown', onKeyDown);
+  });
+}
+
+// グローバルで使えるように window にエクスポート
+window.showConfirm = showConfirm;
+
+// ネットワーク状態変化の監視
+// 流れ: offline/online イベントでユーザーに通知
 window.addEventListener("offline", () => showToast("オフラインになりました。"));
 window.addEventListener("online", () => showToast("オンラインになりました。", "info"));

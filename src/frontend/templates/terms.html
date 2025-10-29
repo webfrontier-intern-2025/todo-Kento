@@ -1,3 +1,10 @@
+<!--
+概要（処理の流れ）:
+- 利用規約ページ。ユーザーが同意するまで他ページへ戻れないように誘導する。
+- 同意チェックボックスと同意ボタンで localStorage に 'termsAgreed' をセット。
+- 同意後は保存しておいた 'termsPrevPath' に戻る（無ければトップへ）。
+- ページ内リンクの誤クリックを防ぐため click イベントでリンク遷移を制限している。
+-->
 {% extends "base.html" %}
 
 {% block title %}利用規約 - TODO App{% endblock %}
@@ -108,6 +115,7 @@
 
 <script>
 // すべてのリンククリックを防止（利用規約ページ内）
+// 理由: 利用規約未確認の状態で外部遷移されるのを防ぐ
 document.addEventListener('click', function(e) {
     const target = e.target.closest('a');
     if (target && target.getAttribute('href') !== '/terms') {
@@ -120,10 +128,14 @@ document.addEventListener('click', function(e) {
 const agreeCheckbox = document.getElementById('agreeCheckbox');
 const agreeButton = document.getElementById('agreeButton');
 
+// チェックボックスでボタンの有効化制御
 agreeCheckbox.addEventListener('change', () => {
     agreeButton.disabled = !agreeCheckbox.checked;
 });
 
+// 同意ボタン押下時の処理（流れ）:
+// 1) localStorage に同意情報を保存
+// 2) 保存しておいた直前ページ 'termsPrevPath' に戻る（無ければ '/'）
 agreeButton.addEventListener('click', () => {
     localStorage.setItem('termsAgreed', 'true');
     localStorage.setItem('termsAgreedDate', new Date().toISOString());

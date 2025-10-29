@@ -117,11 +117,6 @@ h2 {
     transition: all 0.3s;
 }
 
-.feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
 .feature-icon {
     font-size: 3rem;
     margin-bottom: 15px;
@@ -319,14 +314,6 @@ h2 {
     background: #c0392b;
 }
 
-/* ==================== 共通：空の状態表示 ==================== */
-.empty-state {
-    text-align: center;
-    padding: 40px;
-    color: #999;
-    font-size: 16px;
-}
-
 /* ==================== 共通：通知 ==================== */
 .notification {
     position: fixed;
@@ -371,16 +358,29 @@ h2 {
     background: #3498db;
 }
 
+/* 共通スタイル: 空状態表示をここに集約 */
+.empty-state {
+  text-align: center;
+  color: #6b7280; /* gray-500 */
+  padding: 48px 16px;
+  background: transparent;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+/* 共通アニメーション: shake をここに集約 */
+@keyframes shake {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-4px); }
+  50%  { transform: translateX(4px); }
+  75%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
 /* ==================== フィールドエラー表示 ==================== */
 .field-error-highlight {
     border-color: #e74c3c !important;
     animation: shake 0.3s ease-in-out;
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
 }
 
 /* モーダルを中央に配置 */

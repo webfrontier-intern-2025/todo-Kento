@@ -112,13 +112,6 @@
     font-weight: 500;
 }
 
-/* 空の状態 */
-.empty-state {
-    padding: 40px;
-    text-align: center;
-    color: #999;
-}
-
 /* ==================== 統計情報 ==================== */
 .stats-section {
     display: grid;

@@ -1,3 +1,9 @@
+<!--
+概要（処理の流れ）:
+- タグの一覧表示と追加・削除・編集を行う画面。
+- add-tag-form の submit でタグ名と色を収集しタグ作成処理を実行（API または local 処理）。
+- タグ一覧はページ読み込み時に tags.js が取得して描画する。変更時に再取得して表示を更新。
+-->
 {% extends "base.html" %}
 
 {% block title %}タグ管理 - TODO App{% endblock %}
@@ -27,7 +33,7 @@
     <div class="tags-section">
         <h2>登録済みタグ</h2>
         <div id="tags-list" class="tags-list">
-            <!-- タグがここに表示されます -->
+            <!-- タグがここに表示されます（tags.js が描画） -->
         </div>
     </div>
 </div>

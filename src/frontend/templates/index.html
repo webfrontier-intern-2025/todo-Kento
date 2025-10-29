@@ -1,3 +1,8 @@
+<!--
+概要（処理の流れ）:
+- ホームページ。アプリの概要と主要ページへの導線（TODO管理 / TODOリスト など）を表示。
+- CTAリンクは単純なページ遷移。利用規約未同意の場合は base.html のチェックで /terms に飛ばされる。
+-->
 {% extends "base.html" %}
 
 {% block title %}ホーム - TODO App{% endblock %}
@@ -12,13 +17,13 @@
     <div class="features">
         <div class="feature-card">
             <div class="feature-icon">📝</div>
-            <h3>TODO管理</h3>
-            <p>シンプルで使いやすいTODO管理機能</p>
+            <h3>リスト表示</h3>
+            <p>テーブル形式で一覧表示・フィルタリング</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon">📊</div>
-            <h3>リスト表示</h3>
-            <p>テーブル形式で一覧表示・フィルタリング</p>
+            <h3>TODO管理</h3>
+            <p>シンプルで使いやすいTODO管理機能</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon">🏷️</div>

@@ -1,53 +1,74 @@
+// 全体概要（処理の流れ）:
+// - ページ読み込み後にタグとTODOをサーバーから取得して描画する。
+// - ユーザー操作（追加・編集・削除・完了切替・タグ追加）は各イベントで API を呼び出し、完了後に一覧を再取得して UI を更新する。
+// - 通知は showNotification で表示し、フォームの簡易バリデーションや視覚フィードバックを行う。
+
 let availableTags = [];
 let currentTodos = [];
 
 document.addEventListener('DOMContentLoaded', function() {
+    // ページ初期化: タグ・TODOの読み込みとイベントリスナー設定
     loadTags();
     loadTodos();
     setupEventListeners();
 });
 
 function setupEventListeners() {
-    // TODO追加
-    document.getElementById('addButton').addEventListener('click', addTodo);
-    document.getElementById('todoInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            addTodo();
-        }
-    });
+    // 各種 UI のイベントをまとめて登録する（初期表示時に一度だけ呼ぶ）
+    const addBtn = document.getElementById('addButton');
+    if (addBtn) addBtn.addEventListener('click', addTodo);
 
-    // クイックタグ追加
-    document.getElementById('quickAddTagButton').addEventListener('click', quickAddTag);
-    document.getElementById('quickTagInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            quickAddTag();
-        }
-    });
+    const todoInput = document.getElementById('todoInput');
+    if (todoInput) {
+        todoInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+    }
 
-    // TODO編集モーダル
-    document.querySelector('.close-todo-modal').addEventListener('click', closeEditModal);
-    document.getElementById('cancel-edit-todo').addEventListener('click', closeEditModal);
-    
-    // モーダル内削除ボタン
-    document.getElementById('delete-todo-in-modal').addEventListener('click', function() {
-        const id = document.getElementById('edit-todo-id').value;
-        deleteTodoFromModal(parseInt(id));
-    });
-    
+    const quickAddBtn = document.getElementById('quickAddTagButton');
+    if (quickAddBtn) quickAddBtn.addEventListener('click', quickAddTag);
+
+    const quickTagInput = document.getElementById('quickTagInput');
+    if (quickTagInput) {
+        quickTagInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') quickAddTag();
+        });
+    }
+
+    const closeModalBtns = document.querySelectorAll('.close-todo-modal');
+    closeModalBtns.forEach(btn => btn.addEventListener('click', closeEditModal));
+    const cancelEdit = document.getElementById('cancel-edit-todo');
+    if (cancelEdit) cancelEdit.addEventListener('click', closeEditModal);
+
+    const deleteInModal = document.getElementById('delete-todo-in-modal');
+    if (deleteInModal) {
+        deleteInModal.addEventListener('click', function() {
+            const id = document.getElementById('edit-todo-id').value;
+            deleteTodoFromModal(parseInt(id, 10));
+        });
+    }
+
+    const editForm = document.getElementById('edit-todo-form');
+    if (editForm) {
+        editForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await updateTodo();
+        });
+    }
+
+    // モーダル外クリックで閉じる
     window.addEventListener('click', function(e) {
         const modal = document.getElementById('edit-todo-modal');
         if (e.target === modal) {
             closeEditModal();
         }
     });
-
-    document.getElementById('edit-todo-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        await updateTodo();
-    });
 }
 
-// タグを読み込み
+// タグを読み込み（API 呼び出し）
+// 流れ: GET /v1/tag -> availableTags を更新 -> タグ選択 UI を再描画
 async function loadTags() {
     try {
         const response = await fetch('/v1/tag');
@@ -61,9 +82,11 @@ async function loadTags() {
     }
 }
 
-// タグ選択エリアを表示
+// タグ選択エリアを表示（描画ロジック）
+// 流れ: availableTags を元にチェックボックスを生成 -> チェック状態に応じたスタイルイベントを設定
 function displayTagSelection() {
     const tagSelection = document.getElementById('tagSelection');
+    if (!tagSelection) return;
     
     if (availableTags.length === 0) {
         tagSelection.innerHTML = '<p style="color: #999; margin: 0;">タグがありません。下のフォームから追加できます。</p>';
@@ -77,7 +100,7 @@ function displayTagSelection() {
         </label>
     `).join('');
 
-    // チェックボックスの変更イベント
+    // チェックボックスの変更イベント: チェック時にラベルに checked クラスを付与/除去して視覚化する
     const checkboxes = tagSelection.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
@@ -91,14 +114,16 @@ function displayTagSelection() {
     });
 }
 
-// クイックタグ追加
+// クイックタグ追加（API 呼び出し + 再描画）
+// 流れ: 入力検証 -> POST /v1/tag/ -> 成功時は loadTags() で再取得し、新規タグを自動チェック
 async function quickAddTag() {
     const input = document.getElementById('quickTagInput');
     const colorInput = document.getElementById('quickTagColor');
+    if (!input || !colorInput) return;
     const name = input.value.trim();
     const color = colorInput.value;
     
-    // 未入力チェック
+    // 未入力チェック（簡易バリデーション）
     if (!name) {
         input.classList.add('field-error-highlight');
         showNotification('タグ名を入力してください', 'warning');
@@ -131,16 +156,17 @@ async function quickAddTag() {
 
         const newTag = await response.json();
         
-        // タグリストを再読み込み
+        // タグリストを再読み込みして UI を更新
         await loadTags();
         
-        // 追加したタグを自動的にチェック
+        // 追加したタグを自動的にチェックして視覚的に反映
         const checkbox = document.querySelector(`input[type="checkbox"][value="${newTag.id}"]`);
         if (checkbox) {
             checkbox.checked = true;
             checkbox.closest('.tag-checkbox').classList.add('checked');
         }
         
+        // 入力をリセット
         input.value = '';
         colorInput.value = '#667eea';
         
@@ -151,7 +177,8 @@ async function quickAddTag() {
     }
 }
 
-// 通知を表示
+// 通知を表示（UI ヘルパー）
+// 流れ: DOM 要素を作成 -> 一時表示 -> フェードアウトして削除
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -170,7 +197,8 @@ function showNotification(message, type = 'success') {
     }, 2000);
 }
 
-// TODOを読み込み
+// TODOを読み込み（API 呼び出し）
+// 流れ: GET /v1/todo -> currentTodos を更新 -> displayTodos() で描画
 async function loadTodos() {
     try {
         const response = await fetch('/v1/todo');
@@ -184,9 +212,11 @@ async function loadTodos() {
     }
 }
 
-// TODOを表示
+// TODOを表示（描画ロジック）
+// 流れ: currentTodos を HTML に変換して innerHTML を更新。タグがあればタグも表示。
 function displayTodos(todos) {
     const todoList = document.getElementById('todoList');
+    if (!todoList) return;
     
     if (todos.length === 0) {
         todoList.innerHTML = '<div class="empty-state">TODOがありません。上のフォームから追加できます。</div>';
@@ -212,9 +242,11 @@ function displayTodos(todos) {
     }).join('');
 }
 
-// TODOを追加
+// TODOを追加（API 呼び出し）
+// 流れ: 入力検証 -> 選択タグを収集 -> POST /v1/todo/ -> 成功時に input リセット・チェックボックス解除・loadTodos()
 async function addTodo() {
     const input = document.getElementById('todoInput');
+    if (!input) return;
     const content = input.value.trim();
     
     // 未入力チェック
@@ -252,6 +284,7 @@ async function addTodo() {
 
         if (!response.ok) throw new Error('TODOの追加に失敗しました');
 
+        // 成功時の UI 更新
         input.value = '';
         
         // チェックボックスをリセット
@@ -268,60 +301,71 @@ async function addTodo() {
     }
 }
 
-// 編集モーダルを開く
+// 編集モーダルを開く（編集用フォームに値をセット）
+// 流れ: currentTodos から該当 TODO を取得 -> フォームにセット -> タグチェックボックスを生成 -> モーダル表示
 function openEditModal(id) {
     const todo = currentTodos.find(t => t.id === id);
     if (!todo) return;
 
-    document.getElementById('edit-todo-id').value = id;
+    const idEl = document.getElementById('edit-todo-id');
+    if (idEl) idEl.value = id;
     const contentInput = document.getElementById('edit-todo-content');
-    contentInput.value = todo.content;
+    if (contentInput) contentInput.value = todo.content;
     
     // エラー表示をクリア
-    contentInput.classList.remove('field-error-highlight');
+    if (contentInput) contentInput.classList.remove('field-error-highlight');
 
-    // タグ選択を表示
+    // タグ選択を表示（編集用）
     const editTagSelection = document.getElementById('edit-tag-selection');
-    editTagSelection.innerHTML = availableTags.map(tag => {
-        const isChecked = todo.tags && todo.tags.some(t => t.id === tag.id);
-        return `
-            <label class="tag-checkbox ${isChecked ? 'checked' : ''}" style="--tag-color: ${tag.color}">
-                <input type="checkbox" value="${tag.id}" ${isChecked ? 'checked' : ''}>
-                <span>${escapeHtml(tag.name)}</span>
-            </label>
-        `;
-    }).join('');
+    if (editTagSelection) {
+        editTagSelection.innerHTML = availableTags.map(tag => {
+            const isChecked = todo.tags && todo.tags.some(t => t.id === tag.id);
+            return `
+                <label class="tag-checkbox ${isChecked ? 'checked' : ''}" style="--tag-color: ${tag.color}">
+                    <input type="checkbox" value="${tag.id}" ${isChecked ? 'checked' : ''}>
+                    <span>${escapeHtml(tag.name)}</span>
+                </label>
+            `;
+        }).join('');
 
-    // チェックボックスの変更イベント
-    const checkboxes = editTagSelection.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const label = this.closest('.tag-checkbox');
-            if (this.checked) {
-                label.classList.add('checked');
-            } else {
-                label.classList.remove('checked');
-            }
+        // チェックボックスの変更イベントを設定（表示クラスの切替）
+        const checkboxes = editTagSelection.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const label = this.closest('.tag-checkbox');
+                if (this.checked) {
+                    label.classList.add('checked');
+                } else {
+                    label.classList.remove('checked');
+                }
+            });
         });
-    });
+    }
 
-    document.getElementById('edit-todo-modal').style.display = 'flex';
+    // モーダル表示
+    const modal = document.getElementById('edit-todo-modal');
+    if (modal) modal.style.display = 'flex';
 }
 
-// 編集モーダルを閉じる
+// 編集モーダルを閉じる（リセット処理）
+// 流れ: モーダル非表示 -> フォームリセット -> エラー表示クリア
 function closeEditModal() {
-    document.getElementById('edit-todo-modal').style.display = 'none';
-    document.getElementById('edit-todo-form').reset();
+    const modal = document.getElementById('edit-todo-modal');
+    if (modal) modal.style.display = 'none';
+    const form = document.getElementById('edit-todo-form');
+    if (form) form.reset();
     
     // エラー表示をクリア
     const contentInput = document.getElementById('edit-todo-content');
-    contentInput.classList.remove('field-error-highlight');
+    if (contentInput) contentInput.classList.remove('field-error-highlight');
 }
 
-// TODOを更新
+// TODOを更新（API 呼び出し）
+// 流れ: 入力検証 -> 選択タグを収集 -> PUT /v1/todo/{id} -> 成功時はモーダルを閉じて loadTodos()
 async function updateTodo() {
     const id = document.getElementById('edit-todo-id').value;
     const contentInput = document.getElementById('edit-todo-content');
+    if (!contentInput) return;
     const content = contentInput.value.trim();
 
     // 未入力チェック
@@ -368,7 +412,8 @@ async function updateTodo() {
     }
 }
 
-// 完了状態を切り替え
+// 完了状態を切り替え（API 呼び出し）
+// 流れ: PUT /v1/todo/{id}（completed フラグのみ） -> 成功時に一覧再取得
 async function toggleComplete(id, completed) {
     try {
         const response = await fetch(`/v1/todo/${id}`, {
@@ -388,10 +433,19 @@ async function toggleComplete(id, completed) {
     }
 }
 
-// モーダル内からTODOを削除
+// モーダル内からTODOを削除（API 呼び出し）
+// 流れ: ポップアップ（confirm-modal）で確認 -> DELETE /v1/todo/{id} -> 成功時にモーダル閉じて一覧再取得
 async function deleteTodoFromModal(id) {
-    if (!confirm('このTODOを削除しますか?')) {
-        return;
+    // 共通モーダルで確認（showConfirm を使用、無ければフォールバックで confirm）
+    try {
+        const ok = await (window.showConfirm ? window.showConfirm(
+            'このTODOを削除しますか？',
+            { confirmText: '削除する', cancelText: 'キャンセル', title: 'TODO削除の確認' }
+        ) : Promise.resolve(confirm('このTODOを削除しますか?')));
+
+        if (!ok) return;
+    } catch (e) {
+        if (!confirm('このTODOを削除しますか?')) return;
     }
 
     try {
@@ -410,7 +464,8 @@ async function deleteTodoFromModal(id) {
     }
 }
 
-// HTMLエスケープ
+// HTMLエスケープ（XSS 対策の簡易実装）
+// 流れ: textContent を用いて安全にエスケープした値を返す
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;

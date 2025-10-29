@@ -1,152 +1,95 @@
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-▼プロジェクト構造▼
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-・practical-fastapi/
-　├── src/
-　│   ├── api/          # APIエンドポイント
-　│   ├── app/          # アプリケーション設定
-　│   ├── crud/         # データベース操作
-　│   ├── models/       # データベースモデル
-　│   ├── schemas/      # リクエスト/レスポンススキーマ
-　│   └── frontend/     # UI (HTML/CSS/JS)
-　├── migration/        # Alembicマイグレーション
-　├── seed/            # 初期データ投入
-　└── tool/            # Postmanコレクション
+// ...existing code...
+# practical-fastapi — プレビュー
 
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-▼データモデル▼
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-・TodoModel (src/models/todo.py)
-　- id: int (主キー)
-　- content: str (最大1024文字)
-　- completed: bool (デフォルト: False)
-　- deadline: datetime | None
-　- created_at: datetime
-　- updated_at: datetime
-　- tags: list[TagModel] (多対多リレーション)
+概要
+- FastAPI + SQLAlchemy の TODO 管理アプリ。
+- フロント: Jinja2 テンプレート + 静的 JS/CSS。
+- 主な機能: TODO 管理、タグ管理、一覧フィルタ、統計表示。
 
-・TagModel (src/models/tag.py)
-　- id: int (主キー)
-　- name: str (最大50文字, ユニーク)
-　- color: str (7文字, 16進数カラーコード)
-　- created_at: datetime
-　- updated_at: datetime
-　- todos: list[TodoModel] (多対多リレーション)
+構成（要点）
+- src/
+  - api/     : v1 のルータ（todo, tag）
+  - app/     : FastAPI 初期化・DB・設定
+  - crud/    : DB 操作（todo/tag）
+  - models/  : SQLAlchemy モデル
+  - schemas/ : Pydantic スキーマ
+  - frontend/: templates + static (js / css)
+- migration/ : Alembic マイグレーション
+- seed/      : 初期データ + seeder
+- tool/      : Postman 等
 
-・todo_tag (src/models/todo_tag.py)
-　- todo_id: int (外部キー, CASCADE削除)
-　- tag_id: int (外部キー, CASCADE削除)
+データモデル（短縮）
+- Todo
+  - id, content (<=1024), completed (bool), deadline?, created_at, updated_at
+  - tags: 多対多 (todo_tag)
+- Tag
+  - id, name (<=50, unique), color (^#[0-9A-Fa-f]{6}$), created_at, updated_at
+- todo_tag: todo_id, tag_id（ON DELETE CASCADE 想定）
 
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-▼API エンドポイント▼
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-・TODO関連 (src/api/todo.py)
-　メソッド      　パス	　　　　    説明
-　POST	        /v1/todo/	    　TODO作成
-　GET	        /v1/todo/	    　TODO一覧取得
-　GET	        /v1/todo/{id}	　TODO個別取得
-　PUT	        /v1/todo/{id}	　TODO更新
-　DELETE	    /v1/todo/{id}	　TODO削除
+主要 API（v1）
+- TODO
+  - POST   /v1/todo/        作成 (tag_ids を受け取る)
+  - GET    /v1/todo/        一覧（tags を含む）
+  - GET    /v1/todo/{id}    詳細
+  - PUT    /v1/todo/{id}    更新（部分更新可）
+  - DELETE /v1/todo/{id}    削除
+- TAG
+  - POST   /v1/tag/         作成
+  - GET    /v1/tag/         一覧
+  - GET    /v1/tag/{id}     詳細
+  - PUT    /v1/tag/{id}     更新
+  - DELETE /v1/tag/{id}     削除
 
-・タグ関連 (src/api/tag.py)
-　メソッド      　パス	            説明
-　POST	        /v1/tag/	    　タグ作成
-　GET	        /v1/tag/	    　タグ一覧取得
-　GET	        /v1/tag/{id}	　タグ個別取得
-　PUT	        /v1/tag/{id}	　タグ更新
-　DELETE	    /v1/tag/{id}	　タグ削除
+スキーマ（抜粋）
+- TodoCreate: content, deadline?, tag_ids?
+- TodoUpdate: partial fields + tag_ids?
+- TodoResponse: 全フィールド + tags (TagResponse)
+- TagCreate: name, color (regex ^#[0-9A-Fa-f]{6}$)
+- TagResponse: 全フィールド
 
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-▼スキーマ定義▼
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-・TODO (src/schemas/todo.py)
-　┣TodoCreate   : content, deadline?, tag_ids[]
-　┣TodoUpdate   : content?, completed?, deadline?, tag_ids?
-　┗TodoResponse : 全フィールド + タグ情報
+フロント（短く）
+- ルート: / (index), /todo-list, /todos (作成/編集), /tags
+- 主な JS:
+  - main.js: 共通トースト / バリデーション表示
+  - todos.js: TODO 作成/更新/削除、タグ選択
+  - todo_list.js: 一覧描画、フィルター、統計
+  - tags.js: タグ CRUD、カラーピッカー連携
+- フロントは fetch で /v1/* を呼ぶ。エラーは統一フォーマット前提。
 
-・タグ (src/schemas/tag.py)
-　┣TagCreate: name, color (正規表現: ^#[0-9A-Fa-f]{6}$)
-　┣TagUpdate: name?, color?
-　┗TagResponse: 全フィールド
-
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-▼フロントエンド▼
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-・ページ構成
-　URL	        テンプレート	    　説明
-　/	            index.html	        ホーム
-　/todo-list	todo_list.html	    TODOリスト表示
-　/todos	    todos.html	        TODO管理
-　/tags	        tags.html	        タグ管理
-
-■主要機能
-1.TODO管理 (todos.js)
-　┣TODO追加/編集/削除
-　┣タグ選択（カラーピッカー対応）
-　┗クイックタグ追加
-
-2.TODOリスト (todo_list.js)
-　┣テーブル表示
-　┣状態フィルター（全て/未完了/完了済み）
-　┣タグフィルター
-　┗統計情報表示（全TODO/未完了/完了済み/完了率）
-
-3.タグ管理 (tags.js)
-　┣タグ追加/編集/削除
-　┗カラーピッカー対応
-
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-▼エラーハンドリング▼
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-・統一エラーレスポンス形式 (src/app/main.py)
+エラー返却フォーマット（必須）
 {
   "error": {
     "code": "ERROR_CODE",
     "message": "エラーメッセージ",
     "details": [
-      {
-        "field": "フィールド名",
-        "message": "詳細メッセージ"
-      }
+      { "field": "フィールド名", "message": "詳細メッセージ" }
     ]
   },
-  "requestId": "リクエストID"
+  "requestId": "UUID"
 }
+主要エラーコード: VALIDATION_ERROR (422), NOT_FOUND (404), INVALID_TAG_ID (400), CONFLICT (409), INTERNAL_ERROR (500)
 
-■主要エラーコード
-　・VALIDATION_ERROR    (422): 入力検証エラー
-　・NOT_FOUND           (404): リソース未検出
-　・INVALID_TAG_ID      (400): 存在しないタグID
-　・CONFLICT            (409): データ整合性エラー
-　・INTERNAL_ERROR      (500): サーバーエラー
+CRUD 層の要点
+- Todo: create() は tag_ids 存在チェック、read() は joinedload で N+1 回避、update() はタグ差分更新
+- Tag: name のユニーク違反は CONFLICT を返す
 
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-▼CRUD操作▼
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-・TODO (src/crud/todo.py)
-　┣create(): タグIDの存在確認 + リレーション設定
-　┣read(): タグを先読み（N+1問題回避）
-　┣read_all(): 全TODO取得（タグ含む）
-　┣update(): 部分更新対応 + タグ更新
-　┗delete(): カスケード削除（todo_tagも自動削除）
+データベース / マイグレーション
+- DB 設定: src/app/settings.py（.env で DATABASE_URL 指定可）
+- デフォルト: SQLite。Postgres を使う場合は .env を設定。
+- セッション: SessionLocal を DI で利用
+- Alembic: migration/env.py が models.Base.metadata を参照
+- 主要コマンド:
+  - マイグレーションを最新化: alembic upgrade head
 
-・タグ (src/crud/tag.py)
-　┣create(): タグ作成
-　┣get_by_id(): ID検索
-　┣get_by_name(): 名前検索
-　┣update(): 部分更新対応
-　┗delete(): カスケード削除
 
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-▼データベース▼
-＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-・設定 (src/app/database.py)
-　┣SQLite/PostgreSQL対応
-　┗セッション管理（依存性注入）
-
-・マイグレーション履歴
-　┣48ceb0c55790: todoテーブル作成
-　┣ffaeda9f2780: completedカラム追加
-　┣1e19ebd02140: deadlineカラム追加
-　┣b1ff121d00db: tag/todo_tagテーブル作成
-　┗f69369755296: colorカラム追加 + ユニーク制約
+📁 src 
+├── 📁 api                 # v1 API 実装
+├── 📁 app
+│   ├── main.py            # FastAPI エントリポイント
+│   ├── settings.py        # 環境変数・設定
+│   ├── database.py        # DB接続・セッション
+│   └── router.py          # APIルータ統合
+├── 📁 crud                # DB操作ロジック
+├── 📁 models              # SQLAlchemy モデル定義
+├── 📁 schemas             # Pydantic スキーマ
+└── 📁 frontend            # フロントエンド

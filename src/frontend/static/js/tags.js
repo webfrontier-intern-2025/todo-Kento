@@ -1,38 +1,50 @@
+// 全体概要（処理の流れ）:
+// - ページ読み込み時にサーバーからタグ一覧を取得して描画する。
+// - タグの追加・更新・削除はそれぞれ API 呼び出しを行い、成功時に一覧を再取得して UI を更新する。
+// - 編集モードは行単位で切り替え、同時編集はキャンセルしてから切替える。
+// - showNotification で軽いフィードバックを表示する。
+
 let editingTagId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+    // 初期処理: タグ読み込みとイベントリスナー登録
     loadTags();
     setupEventListeners();
 });
 
 // イベントリスナーの設定
+// 流れ: フォームの submit を受け取って addTag を呼び出す（クライアント側バリデーション含む）
 function setupEventListeners() {
     // タグ追加フォーム
-    document.getElementById('add-tag-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const nameInput = document.getElementById('tag-name');
-        const name = nameInput.value.trim();
-        const color = document.getElementById('tag-color').value;
-        
-        // 未入力チェック
-        if (!name) {
-            nameInput.classList.add('field-error-highlight');
-            showNotification('タグ名を入力してください', 'warning');
+    const form = document.getElementById('add-tag-form');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('tag-name');
+            const name = nameInput.value.trim();
+            const color = document.getElementById('tag-color').value;
             
-            // 強調表示を3秒後に解除
-            setTimeout(() => {
-                nameInput.classList.remove('field-error-highlight');
-            }, 3000);
+            // 未入力チェック（ユーザーにフィードバックを返す）
+            if (!name) {
+                nameInput.classList.add('field-error-highlight');
+                showNotification('タグ名を入力してください', 'warning');
+                
+                // 強調表示を3秒後に解除
+                setTimeout(() => {
+                    nameInput.classList.remove('field-error-highlight');
+                }, 3000);
+                
+                nameInput.focus();
+                return;
+            }
             
-            nameInput.focus();
-            return;
-        }
-        
-        await addTag(name, color);
-    });
+            await addTag(name, color);
+        });
+    }
 }
 
-// タグ一覧を読み込み
+// タグ一覧を読み込み（API呼び出し）
+// 流れ: GET /v1/tag -> 成功時に displayTags で描画 / 失敗時は通知表示
 async function loadTags() {
     try {
         const response = await fetch('/v1/tag');
@@ -46,9 +58,11 @@ async function loadTags() {
     }
 }
 
-// タグを表示
+// タグを表示（描画）
+// 流れ: サーバーから受け取った tags 配列を DOM に変換して差し替える
 function displayTags(tags) {
     const tagsList = document.getElementById('tags-list');
+    if (!tagsList) return;
     
     if (tags.length === 0) {
         tagsList.innerHTML = '<div class="empty-state">タグが登録されていません</div>';
@@ -79,6 +93,7 @@ function displayTags(tags) {
 }
 
 // 編集モードを開始
+// 流れ: 他で編集中ならキャンセル -> 関連 DOM を切り替え -> 入力にフォーカス
 function startEdit(tagId) {
     // 他の編集中の項目をキャンセル
     if (editingTagId !== null && editingTagId !== tagId) {
@@ -86,29 +101,35 @@ function startEdit(tagId) {
     }
     
     editingTagId = tagId;
-    document.getElementById(`tag-view-${tagId}`).style.display = 'none';
-    document.getElementById(`tag-edit-${tagId}`).style.display = 'flex';
+    const view = document.getElementById(`tag-view-${tagId}`);
+    const edit = document.getElementById(`tag-edit-${tagId}`);
+    if (view) view.style.display = 'none';
+    if (edit) edit.style.display = 'flex';
     
     // エラー表示をクリア
     const nameInput = document.getElementById(`edit-name-${tagId}`);
-    nameInput.classList.remove('field-error-highlight');
+    if (nameInput) nameInput.classList.remove('field-error-highlight');
     
     // 入力フィールドにフォーカス
-    nameInput.focus();
+    if (nameInput) nameInput.focus();
 }
 
 // 編集をキャンセル
+// 流れ: 編集 UI を閉じて表示モードに戻す（入力のハイライトをクリア）
 function cancelEdit(tagId) {
     editingTagId = null;
-    document.getElementById(`tag-view-${tagId}`).style.display = 'flex';
-    document.getElementById(`tag-edit-${tagId}`).style.display = 'none';
+    const view = document.getElementById(`tag-view-${tagId}`);
+    const edit = document.getElementById(`tag-edit-${tagId}`);
+    if (view) view.style.display = 'flex';
+    if (edit) edit.style.display = 'none';
     
     // エラー表示をクリア
     const nameInput = document.getElementById(`edit-name-${tagId}`);
-    nameInput.classList.remove('field-error-highlight');
+    if (nameInput) nameInput.classList.remove('field-error-highlight');
 }
 
-// タグを追加
+// タグを追加（API呼び出し）
+// 流れ: POST /v1/tag -> 成功時はフォームリセットと loadTags() -> 失敗時はエラーメッセージ表示
 async function addTag(name, color) {
     const nameInput = document.getElementById('tag-name');
     
@@ -128,7 +149,8 @@ async function addTag(name, color) {
 
         nameInput.value = '';
         nameInput.classList.remove('field-error-highlight');
-        document.getElementById('tag-color').value = '#667eea';
+        const colorEl = document.getElementById('tag-color');
+        if (colorEl) colorEl.value = '#667eea';
         await loadTags();
         showNotification('タグを追加しました');
     } catch (error) {
@@ -137,13 +159,16 @@ async function addTag(name, color) {
     }
 }
 
-// タグを更新
+// タグを更新（API呼び出し）
+// 流れ: 入力検証 -> PUT /v1/tag/{id} -> 成功時に一覧再取得、失敗時は通知
 async function updateTag(tagId) {
     const nameInput = document.getElementById(`edit-name-${tagId}`);
+    if (!nameInput) return;
     const name = nameInput.value.trim();
-    const color = document.getElementById(`edit-color-${tagId}`).value;
+    const colorEl = document.getElementById(`edit-color-${tagId}`);
+    const color = colorEl ? colorEl.value : '#667eea';
 
-    // 未入力チェック
+    // 未入力チェック（クライアント側バリデーション）
     if (!name) {
         nameInput.classList.add('field-error-highlight');
         showNotification('タグ名を入力してください', 'warning');
@@ -183,10 +208,19 @@ async function updateTag(tagId) {
     }
 }
 
-// タグを削除
+// タグを削除（API呼び出し）
+// 流れ: ポップアップ（confirm-modal）で確認 -> DELETE /v1/tag/{id} -> 成功時は一覧再取得、失敗時は通知
 async function deleteTag(tagId) {
-    if (!confirm('このタグを削除しますか?\n関連付けられたTODOからもタグが削除されます。')) {
-        return;
+    // 共通モーダルで確認（showConfirm を使用、無ければフォールバックで confirm）
+    try {
+        const ok = await (window.showConfirm ? window.showConfirm(
+            'このタグを削除しますか?\n関連付けられたTODOからもタグが削除されます。',
+            { confirmText: '削除する', cancelText: 'キャンセル', title: 'タグ削除の確認' }
+        ) : Promise.resolve(confirm('このタグを削除しますか?\n関連付けられたTODOからもタグが削除されます。')));
+
+        if (!ok) return;
+    } catch (e) {
+        if (!confirm('このタグを削除しますか?\n関連付けられたTODOからもタグが削除されます。')) return;
     }
 
     try {
@@ -204,7 +238,8 @@ async function deleteTag(tagId) {
     }
 }
 
-// 通知を表示
+// 通知を表示（UI ヘルパー）
+// 流れ: DOM 要素を作成 -> 一時表示 -> フェードアウトして削除
 function showNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -223,7 +258,8 @@ function showNotification(message, type = 'success') {
     }, 2000);
 }
 
-// HTMLエスケープ
+// HTMLエスケープ（XSS対策）
+// 流れ: DOM の textContent を使って安全にエスケープした値を返す
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;

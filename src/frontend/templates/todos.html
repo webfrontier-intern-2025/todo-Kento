@@ -1,3 +1,10 @@
+<!--
+概要（処理の流れ）:
+- ユーザーが TODO を追加/編集/削除・タグ付けできるインターフェース。
+- ページ読み込み時に tags.js と todos.js がタグとTODOを取得して描画する想定。
+- 追加時: 入力 -> 選択中のタグIDを収集 -> API 呼び出し（または localStorage 処理） -> リスト更新。
+- 編集モーダル: 編集データをセットして表示 -> 更新/削除操作 -> リスト更新。
+-->
 {% extends "base.html" %}
 
 {% block title %}TODO管理 - TODO App{% endblock %}
@@ -21,7 +28,7 @@
         
         <!-- タグ選択エリア -->
         <div id="tagSelection" class="tag-selection">
-            <!-- タグがここに表示されます -->
+            <!-- タグがここに表示されます（tags.js が描画） -->
         </div>
         
         <!-- クイックタグ追加 -->
@@ -34,11 +41,15 @@
 
     <!-- Todoリスト -->
     <ul id="todoList" class="todo-list">
-        <!-- TODOがここに表示されます -->
+        <!-- TODOがここに表示されます（todos.js が描画） -->
     </ul>
 </div>
 
-<!-- TODO編集モーダル -->
+<!-- TODO編集モーダル（編集の流れ）:
+     - edit ボタンで対象 TODO のデータとタグをモーダルにセットして表示
+     - 更新ボタンで入力値を収集し API に送信（または local 処理） -> モーダルを閉じてリスト再描画
+     - 削除ボタンは確認および API 呼び出し -> リスト再描画
+-->
 <div id="edit-todo-modal" class="modal" style="display: none;">
     <div class="modal-content">
         <span class="close-todo-modal">&times;</span>
@@ -52,7 +63,7 @@
             <div class="form-group">
                 <label>タグ</label>
                 <div id="edit-tag-selection" class="tag-selection">
-                    <!-- タグがここに表示されます -->
+                    <!-- タグがここに表示されます（編集用、tags.js から流用） -->
                 </div>
             </div>
             <div class="modal-buttons">

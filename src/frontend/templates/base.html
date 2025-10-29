@@ -1,3 +1,10 @@
+<!--
+概要（処理の流れ）:
+- 全ページの共通レイアウト。ナビゲーション、共通CSS/JSを読み込む。
+- 利用規約同意のチェックを行い、未同意なら /terms にリダイレクトする（ブラウザ localStorage を利用）。
+- /terms ページではナビゲーションを無効化して同意を促す。
+- 各ページ固有のスクリプトは block extra_js で読み込まれる。
+-->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -19,7 +26,7 @@
     </style>
 </head>
 <body>
-    <!-- ナビゲーションバー -->
+    <!-- ナビゲーションバー（共通） -->
     <nav class="navbar" id="mainNavbar">
         <div class="nav-container">
             <div class="navbar-menu">
@@ -38,7 +45,12 @@
     <script src="{{ url_for('static', path='/js/main.js') }}"></script>
     {% block extra_js %}{% endblock %}
     
-    <!-- 利用規約同意チェック: /terms ページ以外は同意済みか localStorage を確認し、未同意なら /terms へリダイレクト -->
+    <!-- 利用規約同意チェック（概要）:
+         - ページ読み込み時に localStorage の 'termsAgreed' を確認。
+         - 除外パスをチェック（/licenses, /static, /api/等）。
+         - 未同意なら現在のパスを 'termsPrevPath' に保存し /terms にリダイレクトする。
+         - /terms ページではナビゲーションを無効化して同意操作を促す。
+    -->
     <script>
     (function(){
         try {
@@ -57,9 +69,8 @@
             // 除外パス: /licenses, static ファイル, favicon, openapi, API プレフィックス
             if (p.startsWith('/licenses') || p.startsWith('/static') || p.startsWith('/favicon.ico') || p.startsWith('/api/')) return;
             
-            // 未同意の場合はリダイレクト
+            // 未同意の場合はリダイレクト（戻れるように現在パスを保存）
             if (!agreed) {
-                // 同意ページから戻れるように現在のパスを保存
                 try { 
                     localStorage.setItem('termsPrevPath', window.location.pathname + window.location.search); 
                 } catch(e){}
@@ -68,5 +79,17 @@
         } catch(e){}
     })();
     </script>
+
+    <!-- 共通確認モーダル（タグ/TODO削除などで利用） -->
+    <div id="confirm-modal" class="modal" style="display: none; align-items: center; justify-content: center;">
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title" style="max-width:420px;">
+        <h2 id="confirm-modal-title">確認</h2>
+        <p id="confirm-modal-message" style="margin-top: 12px; color: #333;">本当に実行しますか？</p>
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+            <button id="confirm-modal-confirm" class="btn-danger">削除する</button>
+          <button id="confirm-modal-cancel" class="btn-secondary">キャンセル</button>
+        </div>
+      </div>
+    </div>
 </body>
 </html>
