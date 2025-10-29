@@ -1,3 +1,9 @@
+<!--
+概要（処理の流れ）:
+- テーブル形式で TODO を一覧表示し、状態（未完了/完了）やタグでフィルタリングできる画面。
+- ページ読み込み時に todo_list.js がデータを取得してテーブルと統計情報を描画する。
+- フィルタ変更時はクライアント側でフィルタリングして表示を更新、必要なら API にクエリを投げる実装へ拡張可能。
+-->
 {% extends "base.html" %}
 
 {% block title %}TODOリスト - TODO App{% endblock %}
@@ -25,7 +31,7 @@
             <label>タグ:</label>
             <select id="tagFilter">
                 <option value="all">すべて</option>
-                <!-- タグがここに追加されます -->
+                <!-- タグがここに追加されます（todo_list.js が描画） -->
             </select>
         </div>
     </div>
@@ -47,7 +53,10 @@
         </table>
     </div>
 
-    <!-- 統計情報 -->
+    <!-- 統計情報（描画の流れ）:
+         - データ取得後に total/active/completed を計算して表示。
+         - 完了率は簡易計算（completed/total）。
+    -->
     <div class="stats-section">
         <div class="stat-card">
             <div class="stat-label">全TODO</div>

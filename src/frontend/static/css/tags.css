@@ -28,12 +28,6 @@
     animation: shake 0.3s ease-in-out;
 }
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
 /* カラーピッカーラッパー */
 .color-picker-wrapper {
     display: flex;
@@ -228,12 +222,4 @@
 
 .cancel-button:hover {
     background: #7f8c8d;
-}
-
-/* 空の状態 */
-.empty-state {
-    text-align: center;
-    padding: 40px;
-    color: #999;
-    font-size: 16px;
 }

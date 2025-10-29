@@ -106,8 +106,6 @@ async def _http_handler(request: Request, exc: HTTPException):
         request_id=getattr(request.state, "request_id", None),
     )
 
-    # ...existing code...
-
 
 # StarletteのHTTPException（未定義ルート等）を統一フォーマットで返す
 @app.exception_handler(StarletteHTTPException)
@@ -133,9 +131,6 @@ async def _starlette_http_handler(request: Request, exc: StarletteHTTPException)
         details=[],
         request_id=getattr(request.state, "request_id", None),
     )
-
-
-# ...existing code...
 
 
 @app.exception_handler(IntegrityError)
@@ -164,9 +159,6 @@ async def favicon():
     return RedirectResponse(url="/static/favicon.svg", status_code=307)
 
 
-# ...existing code...
-
-
 with open(settings.LOGGING_CONF, encoding="utf-8") as f:
     config.dictConfig(json.load(f))
 
@@ -180,7 +172,7 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
-# ★ テンプレートと静的ファイルの設定（追加）
+# テンプレートと静的ファイルの設定
 templates = Jinja2Templates(directory="src/frontend/templates")
 app.mount("/static", StaticFiles(directory="src/frontend/static"), name="static")
 
@@ -188,7 +180,7 @@ app.mount("/static", StaticFiles(directory="src/frontend/static"), name="static"
 app.include_router(api_router, prefix=settings.API_VER_STR)
 
 
-# ★ UIのルート（追加）
+# UIのルート
 @app.get("/", include_in_schema=False)
 async def read_root(request: Request):
     """TODOアプリのトップページ"""
